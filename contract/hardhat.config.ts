@@ -2,6 +2,7 @@ import { task } from "hardhat/config"
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers"
 import { BigNumber } from "ethers"
 import "@nomiclabs/hardhat-waffle"
+import "@nomicfoundation/hardhat-verify"
 
 // When using the hardhat network, you may choose to fork Fuji or Avalanche Mainnet
 // This will allow you to debug contracts using the hardhat network while keeping the current network state
@@ -38,18 +39,6 @@ export default {
   solidity: {
     compilers: [
       {
-        version: "0.5.16"
-      },
-      {
-        version: "0.6.2"
-      },
-      {
-        version: "0.6.4"
-      },
-      {
-        version: "0.7.0"
-      },
-      {
         version: "0.8.0"
       },
       {
@@ -57,10 +46,18 @@ export default {
       }
     ]
   },
+  etherscan: {
+    apiKey: {
+      avalancheFujiTestnet: "dummy"
+    }
+  },
+  sourcify: {
+    enabled: true
+  },
   networks: {
     hardhat: {
       gasPrice: 225000000000,
-      chainId: !forkingData ? 43112 : undefined, //Only specify a chainId if we are not forking
+      chainId: !forkingData ? 43112 : undefined,
       forking: forkingData
     },
     local: {
