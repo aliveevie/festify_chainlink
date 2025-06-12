@@ -6,3 +6,5 @@ forge-std/=lib/forge-std/src/
 @teleporter/=lib/icm-contracts/contracts/teleporter/
 @teleporter-mocks/=lib/icm-contracts/contracts/mocks/
 @avalanche-interchain-token-transfer/=lib/icm-contracts/contracts/ictt/
+@chainlink/contracts/=lib/chainlink-brownie-contracts/contracts/
+@chainlink/contracts-ccip/=lib/chainlink-brownie-contracts/contracts-ccip/
