@@ -1,60 +1,49 @@
-
 import { Github, Twitter, Linkedin, Heart } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-background border-t border-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="col-span-1 md:col-span-2">
-            <div className="text-2xl font-bold bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent mb-4">
-              Boilerplate
-            </div>
-            <p className="text-muted-foreground mb-4 max-w-md">
-              A modern React TypeScript boilerplate with Tailwind CSS. 
-              Built for developers who want to ship fast without compromising on quality.
-            </p>
-            <div className="flex space-x-4">
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Github className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Linkedin className="w-5 h-5" />
-              </a>
-            </div>
-          </div>
-          
+    <footer className="border-t border-border bg-background/80 backdrop-blur-sm py-12 mt-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-8">
+          {/* Logo & Description */}
           <div>
-            <h3 className="text-foreground font-semibold mb-4">Quick Links</h3>
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-blue-500 flex items-center justify-center text-white font-bold text-xl">
+                FT
+              </div>
+              <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
+                Festify
+              </span>
+            </div>
+            <p className="text-muted-foreground mb-4">
+              Festify is a cross-chain festival messaging platform powered by Avalanche and Chainlink CCIP. Send secure, cross-chain greetings and connect with festival-goers everywhere.
+            </p>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h4 className="font-semibold mb-4 text-foreground">Quick Links</h4>
             <ul className="space-y-2">
-              <li><a href="#home" className="text-muted-foreground hover:text-primary transition-colors">Home</a></li>
-              <li><a href="#features" className="text-muted-foreground hover:text-primary transition-colors">Features</a></li>
-              <li><a href="#about" className="text-muted-foreground hover:text-primary transition-colors">About</a></li>
-              <li><a href="#contact" className="text-muted-foreground hover:text-primary transition-colors">Contact</a></li>
+              <li><span className="text-muted-foreground hover:text-purple-600 transition-colors cursor-default">Home</span></li>
+              <li><span className="text-muted-foreground hover:text-purple-600 transition-colors cursor-default">Features</span></li>
+              <li><span className="text-muted-foreground hover:text-purple-600 transition-colors cursor-default">Send Message</span></li>
+              <li><span className="text-muted-foreground hover:text-purple-600 transition-colors cursor-default">Explore Chains</span></li>
             </ul>
           </div>
-          
+
+          {/* Resources */}
           <div>
-            <h3 className="text-foreground font-semibold mb-4">Resources</h3>
+            <h4 className="font-semibold mb-4 text-foreground">Resources</h4>
             <ul className="space-y-2">
-              <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Documentation</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">GitHub</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Community</a></li>
-              <li><a href="#" className="text-muted-foreground hover:text-primary transition-colors">Support</a></li>
+              <li><span className="text-muted-foreground hover:text-purple-600 transition-colors cursor-default">Chainlink CCIP</span></li>
+              <li><span className="text-muted-foreground hover:text-purple-600 transition-colors cursor-default">Avalanche</span></li>
+              <li><span className="text-muted-foreground hover:text-purple-600 transition-colors cursor-default">Support</span></li>
             </ul>
           </div>
         </div>
-        
-        <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-muted-foreground text-sm">
-            © 2024 Boilerplate. All rights reserved.
-          </p>
-          <p className="text-muted-foreground text-sm flex items-center mt-2 md:mt-0">
-            Made with <Heart className="w-4 h-4 text-red-500 mx-1" /> using React & Tailwind
-          </p>
+        <div className="flex flex-col md:flex-row justify-between items-center border-t border-border pt-6">
+          <span className="text-muted-foreground text-sm mb-2 md:mb-0">© {new Date().getFullYear()} Festify. All rights reserved.</span>
+          <span className="text-muted-foreground text-sm">Made with <span className="text-red-500">♥</span> by <span className="underline hover:text-purple-600 cursor-default">@ibrahim_193</span> (tg)</span>
         </div>
       </div>
     </footer>

@@ -1,9 +1,9 @@
 import { ConnectButton } from "@avalabs/builderkit";
-import { Link, useLocation } from "react-router-dom";
+// import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const Header = () => {
-  const location = useLocation();
+  // const location = useLocation();
 
   const navItems = [
     { label: 'Home', path: '/' },
@@ -18,7 +18,7 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-3 group">
+            <span className="flex items-center space-x-3 group cursor-default">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-purple-600 via-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl transform transition-transform duration-300 group-hover:scale-105 group-hover:rotate-3">
                 FT
               </div>
@@ -28,24 +28,24 @@ const Header = () => {
                 </span>
                 <span className="text-xs text-gray-500 dark:text-gray-400 -mt-1">Avalanche Events</span>
               </div>
-            </Link>
+            </span>
           </div>
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
             {navItems.map((item) => (
-              <Link
+              <span
                 key={item.path}
-                to={item.path}
                 className={cn(
-                  "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200",
-                  location.pathname === item.path
+                  "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-default text-gray-600 dark:text-gray-300",
+                  // location.pathname === item.path
+                  false
                     ? "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400"
-                    : "text-gray-600 hover:text-purple-600 dark:text-gray-300 dark:hover:text-purple-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                    : "hover:text-purple-600 dark:hover:text-purple-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                 )}
               >
                 {item.label}
-              </Link>
+              </span>
             ))}
           </nav>
 
