@@ -1,3 +1,6 @@
 # Festify Avax!
 Fuji - C: Sender Address: 0x8df379BbCCFDa5E8A0ca0D14889d49ba39613F15
 Transaction hash: 0x56ff33c8817cbb34a07603db6be2a38632783c539400d455bb916bf0d792aadc
+
+Subnet - C: Receiver Address: 0x75773539b96E90A18408a30b4eeb16D511B37AA4
+Transaction Hash: 0xebef536d1f01e506f575c3f4ba30852cab4a09ac3197b6f3989233df38e87e99
