@@ -1,0 +1,11 @@
+[profile.default]
+src = "."
+out = "out"
+libs = ["../lib"]
+solc = "0.8.25"
+evm_version = "shanghai"
+
+remappings = [
+    "@openzeppelin/contracts/=../lib/openzeppelin-contracts/contracts/",
+    "@teleporter/=../lib/icm-contracts/contracts/teleporter/"
+] 
