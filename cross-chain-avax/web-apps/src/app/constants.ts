@@ -1,15 +1,22 @@
-import { fuji } from "./chains/definitions/fuji";
-import { echo } from "./chains/definitions/echo";
-import { dispatch } from "./chains/definitions/dispatch";
+import { Chain } from 'viem';
+import { avalanche, avalancheFuji } from 'viem/chains';
 
-export const CHAINS = [fuji, echo, dispatch];
+export const CHAINS: Chain[] = [avalanche, avalancheFuji];
+
 export const TOKENS = [
     {
         address: "native",
-        name: "Avalanche",
-        symbol: "AVAX",
         decimals: 18,
-        chain_id: 43113
+        symbol: "AVAX",
+        name: "Avalanche",
+        logoUri: "/avax.svg"
+    },
+    {
+        address: "0x8D6f0E153B1D4Efb46c510278Db3678Bb1Cc823d",
+        decimals: 18,
+        symbol: "USDC",
+        name: "USD Coin",
+        logoUri: "/usdc.svg"
     },
     {
         address: "0x8D6f0E153B1D4Efb46c510278Db3678Bb1Cc823d",
