@@ -1,1 +1,3 @@
 # Festify Avax!
+Fuji - C: Sender Address: 0x8df379BbCCFDa5E8A0ca0D14889d49ba39613F15
+Transaction hash: 0x56ff33c8817cbb34a07603db6be2a38632783c539400d455bb916bf0d792aadc
