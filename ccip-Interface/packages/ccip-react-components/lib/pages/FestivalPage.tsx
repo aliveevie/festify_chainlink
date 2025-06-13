@@ -5,8 +5,8 @@ import { useAppContext } from '@/hooks/useAppContext';
 export function FestivalPage() {
   const { isConnectOpen } = useAppContext();
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-purple-50">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-b from-white to-purple-50 relative">
+      <div className="w-full max-w-5xl flex flex-col items-center justify-center px-4 py-8">
         <FestivalGreetings />
       </div>
       {isConnectOpen && (

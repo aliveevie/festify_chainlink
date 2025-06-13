@@ -7,6 +7,7 @@ import { parseEther } from 'viem';
 import { Button } from './ui/button';
 import { ConnectWallet } from './ConnectWallet';
 import { cn } from '../utils/cn';
+import { Sparkles } from 'lucide-react';
 
 // Contract addresses
 const SENDER_CONTRACT = '0x18545C92aa24A6822FB105b70A2f40B169c92C44';
@@ -155,85 +156,83 @@ export function FestivalGreetings() {
 
   if (!isConnected) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] p-6 bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl shadow-lg">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Connect to Send Festival Greetings</h2>
+      <div className="flex flex-col items-center justify-center min-h-[400px] p-8 bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl shadow-2xl border border-gray-100">
+        <Sparkles className="w-10 h-10 text-purple-500 mb-4 animate-pulse" />
+        <h2 className="text-3xl font-extrabold text-gray-800 mb-2 tracking-tight">Connect to Send Festival Greetings</h2>
+        <p className="text-gray-500 mb-6 text-center max-w-xs">Connect your wallet to send and receive greetings across chains.</p>
         <ConnectWallet />
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-8">
+    <div className="flex flex-col items-center justify-center min-h-screen py-8 px-2">
       {/* Header */}
-      <div className="text-center space-y-4">
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-          Festival Greetings
-        </h1>
-        <p className="text-gray-600">
-          Send your festival greetings across chains using Chainlink CCIP
+      <div className="mb-10 text-center">
+        <div className="flex items-center justify-center mb-2">
+          <Sparkles className="w-8 h-8 text-purple-600 mr-2 animate-fade-in" />
+          <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent tracking-tight drop-shadow-lg">
+            Festival Greetings
+          </h1>
+        </div>
+        <p className="text-lg text-gray-500 font-medium max-w-2xl mx-auto">
+          Send your festival greetings across chains using <span className="font-semibold text-purple-600">Chainlink CCIP</span>
         </p>
       </div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Send Greeting Form */}
-        <div className="bg-white rounded-xl shadow-lg p-6 space-y-6">
-          <h2 className="text-2xl font-semibold text-gray-800">Send a Greeting</h2>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <div className="mx-auto max-w-3xl w-full grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Send Greeting Card */}
+        <div className="bg-white/90 rounded-2xl shadow-xl border border-gray-100 p-8 flex flex-col space-y-6 transition-transform hover:scale-[1.02] hover:shadow-2xl">
+          <h2 className="text-2xl font-bold text-gray-800 flex items-center mb-2">
+            <Sparkles className="w-6 h-6 text-purple-500 mr-2" />
+            Send a Greeting
+          </h2>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Your Name
-              </label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Your Name</label>
               <input
                 {...form.register('name')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-base"
                 placeholder="Enter your name"
               />
               {form.formState.errors.name && (
-                <p className="mt-1 text-sm text-red-600">{form.formState.errors.name.message}</p>
+                <p className="mt-1 text-xs text-red-600">{form.formState.errors.name.message}</p>
               )}
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Festival Name
-              </label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Festival Name</label>
               <input
                 {...form.register('festival')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-base"
                 placeholder="Enter festival name"
               />
               {form.formState.errors.festival && (
-                <p className="mt-1 text-sm text-red-600">{form.formState.errors.festival.message}</p>
+                <p className="mt-1 text-xs text-red-600">{form.formState.errors.festival.message}</p>
               )}
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Your Greeting
-              </label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Your Greeting</label>
               <textarea
                 {...form.register('greeting')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent min-h-[100px]"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent min-h-[100px] transition-all text-base"
                 placeholder="Write your festival greeting..."
               />
               {form.formState.errors.greeting && (
-                <p className="mt-1 text-sm text-red-600">{form.formState.errors.greeting.message}</p>
+                <p className="mt-1 text-xs text-red-600">{form.formState.errors.greeting.message}</p>
               )}
             </div>
-
             <Button
               type="submit"
               disabled={!form.formState.isValid || isSending || isPending}
               className={cn(
-                "w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white",
-                "hover:from-purple-700 hover:to-blue-700",
+                "w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-2 rounded-lg shadow-md",
+                "hover:from-purple-700 hover:to-blue-700 hover:shadow-lg transition-all duration-150",
                 "disabled:opacity-50 disabled:cursor-not-allowed"
               )}
             >
               {isSending || isPending ? 'Sending...' : 'Send Greeting'}
             </Button>
-
             {error && (
               <p className="mt-2 text-sm text-red-600">{error}</p>
             )}
@@ -245,11 +244,14 @@ export function FestivalGreetings() {
           </form>
         </div>
 
-        {/* Received Greetings */}
-        <div className="bg-white rounded-xl shadow-lg p-6 space-y-6">
-          <h2 className="text-2xl font-semibold text-gray-800">Latest Greeting</h2>
+        {/* Latest Greeting Card */}
+        <div className="bg-white/90 rounded-2xl shadow-xl border border-gray-100 p-8 flex flex-col space-y-6 transition-transform hover:scale-[1.02] hover:shadow-2xl">
+          <h2 className="text-2xl font-bold text-gray-800 flex items-center mb-2">
+            <Sparkles className="w-6 h-6 text-blue-500 mr-2" />
+            Latest Greeting
+          </h2>
           {lastGreeting ? (
-            <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg p-6">
+            <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg p-6 animate-fade-in">
               <div className="space-y-4">
                 {(() => {
                   try {
@@ -258,8 +260,8 @@ export function FestivalGreetings() {
                       <>
                         <p className="text-lg font-medium text-gray-800">{data.greeting}</p>
                         <div className="flex items-center justify-between text-sm text-gray-600">
-                          <span>From: {data.name}</span>
-                          <span>Festival: {data.festival}</span>
+                          <span>From: <span className="font-semibold text-purple-600">{data.name}</span></span>
+                          <span>Festival: <span className="font-semibold text-blue-600">{data.festival}</span></span>
                         </div>
                         <div className="text-xs text-gray-500">
                           Sent at: {new Date(data.timestamp).toLocaleString()}
@@ -273,7 +275,7 @@ export function FestivalGreetings() {
               </div>
             </div>
           ) : (
-            <p className="text-gray-600">No greetings received yet</p>
+            <p className="text-gray-500">No greetings received yet</p>
           )}
         </div>
       </div>

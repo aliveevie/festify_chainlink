@@ -28,6 +28,18 @@
     --ccip-warning: #F7B955;
     --ccip-warning-background: #2D2D2D;
   }
+  
+  /* Global centering styles */
+  html, body, #root {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+  }
 }
 
 @layer components {
@@ -60,5 +72,15 @@
   }
   .bg-ccip-warning-background {
     background-color: var(--ccip-warning-background);
+  }
+  
+  /* Animation for fade-in effect */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
   }
 } 
