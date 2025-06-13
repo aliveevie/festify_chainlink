@@ -6,7 +6,11 @@ import dts from 'vite-plugin-dts';
 import tailwindcss from 'tailwindcss';
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  server: {
+    port: 5173,
+    open: true,
+  },
   build: {
     lib: {
       entry: resolve(__dirname, './lib/index.ts'),
@@ -26,7 +30,10 @@ export default defineConfig({
     sourcemap: true,
     emptyOutDir: true,
   },
-  plugins: [react(), dts({ rollupTypes: true })],
+  plugins: [
+    react(),
+    dts({ rollupTypes: true }),
+  ],
   resolve: {
     alias: {
       '@': resolve(__dirname, './lib'),
@@ -51,4 +58,12 @@ export default defineConfig({
       plugins: [tailwindcss],
     },
   },
-});
+  // Add development entry point
+  ...(command === 'serve' && {
+    root: './lib',
+    publicDir: '../public',
+    build: {
+      outDir: '../dist',
+    },
+  }),
+}));
