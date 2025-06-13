@@ -3,12 +3,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAccount, useReadContract, useWriteContract, useWatchContractEvent, useWaitForTransactionReceipt } from 'wagmi';
-import { parseEther } from 'viem';
 import { Button } from './ui/button';
 import { ConnectWallet } from './ConnectWallet';
 import { cn } from '../utils/cn';
 import { Sparkles } from 'lucide-react';
-import { useChains } from '@/hooks/useChains';
 import { Copy, ArrowRight, Eye } from 'lucide-react';
 import {
   Select,
@@ -94,13 +92,13 @@ type FestivalDataSentEvent = {
   transactionHash: `0x${string}`;
 };
 
-const CHAIN_COLORS: Record<string, string> = {
-  'Avalanche Fuji': 'bg-red-500',
-  'Ethereum Sepolia': 'bg-blue-500',
-  'Arbitrum Sepolia': 'bg-orange-500',
-  'Polygon Mumbai': 'bg-fuchsia-500',
-  'Optimism Sepolia': 'bg-pink-400',
-};
+// const CHAIN_COLORS: Record<string, string> = {
+//   'Avalanche Fuji': 'bg-red-500',
+//   'Ethereum Sepolia': 'bg-blue-500',
+//   'Arbitrum Sepolia': 'bg-orange-500',
+//   'Polygon Mumbai': 'bg-fuchsia-500',
+//   'Optimism Sepolia': 'bg-pink-400',
+// };
 
 const MANUAL_CHAINS = [
   { chainId: '43113', label: 'Avalanche Fuji', color: 'bg-red-500' },
@@ -111,7 +109,7 @@ const MANUAL_CHAINS = [
 ];
 
 export function FestivalGreetings() {
-  const { address, isConnected } = useAccount();
+  const {  isConnected } = useAccount();
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [transactionHash, setTransactionHash] = useState<`0x${string}` | null>(null);
@@ -128,8 +126,7 @@ export function FestivalGreetings() {
   }>>([]);
   const [fromChain, setFromChain] = useState<string | undefined>(MANUAL_CHAINS[0].chainId);
   const [toChain, setToChain] = useState<string | undefined>(MANUAL_CHAINS[1].chainId);
-  const { chainsInfo } = useChains();
-
+  
   // Form setup
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -141,7 +138,7 @@ export function FestivalGreetings() {
   });
 
   // Contract reads
-  const { data: lastGreeting, refetch: refetchLastGreeting } = useReadContract({
+  const { refetch: refetchLastGreeting } = useReadContract({
     address: RECEIVER_CONTRACT as `0x${string}`,
     abi: receiverAbi,
     functionName: 'getLastReceivedFestivalData'
