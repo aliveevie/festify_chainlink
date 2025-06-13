@@ -8,6 +8,7 @@ import { Drawer } from '@/components/Drawer';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/utils';
 import { ConfigProps, TDrawer } from '@/types';
+import { FestivalPage } from './pages/FestivalPage';
 
 export const App = forwardRef<TDrawer, ConfigProps>(
   ({ config, drawer, networkConfig }, ref) => {
@@ -16,7 +17,7 @@ export const App = forwardRef<TDrawer, ConfigProps>(
         <Providers config={config} networkConfig={networkConfig}>
           <Drawer open={drawer?.open} ref={ref}>
             <Container>
-              <Default />
+              <FestivalPage />
             </Container>
           </Drawer>
         </Providers>
@@ -26,7 +27,7 @@ export const App = forwardRef<TDrawer, ConfigProps>(
     return (
       <Providers config={config} networkConfig={networkConfig}>
         <Container>
-          <Default />
+          <FestivalPage />
         </Container>
       </Providers>
     );

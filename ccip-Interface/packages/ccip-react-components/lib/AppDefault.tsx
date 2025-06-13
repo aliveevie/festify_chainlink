@@ -8,30 +8,11 @@ import { CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { buttonVariants } from '@/components/ui/button';
 import { ChainlinkSVG } from '@/components/svg/chainlink';
 import { cn } from '@/utils';
+import { FestivalGreetings } from './components/FestivalGreetings';
 
-export const Default = () => {
-  const { messageId, isConnectOpen } = useAppContext();
-
-  if (isConnectOpen) return <ChooseWallet />;
-
-  if (messageId) {
-    return (
-      <>
-        <Header />
-        <TxProgress />
-        <Footer />
-      </>
-    );
-  }
-
-  return (
-    <>
-      <Header />
-      <BridgeForm />
-      <Footer />
-    </>
-  );
-};
+export function Default() {
+  return <FestivalGreetings />;
+}
 
 const Header = () => (
   <CardHeader className="flex-row justify-between items-center space-y-0 text-ccip-primary">

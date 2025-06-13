@@ -15,7 +15,11 @@
       "require": "./dist/index.umd.js",
       "types": "./dist/index.d.ts"
     },
-    "./dist/style.css": "./dist/style.css"
+    "./dist/style.css": "./dist/style.css",
+    "./lib/index.d.ts": "./lib/index.d.ts",
+    "./lib/index.js": "./lib/index.js",
+    "./lib/index.cjs": "./lib/index.cjs",
+    "./styles.css": "./lib/styles.css"
   },
   "scripts": {
     "dev": "vite",
@@ -73,5 +77,9 @@
     "vite": "^5.3.1",
     "vite-plugin-dts": "^3.9.1",
     "vitest": "^2.0.5"
+  },
+  "peerDependencies": {
+    "react": "^18",
+    "react-dom": "^18"
   }
 }
