@@ -2,12 +2,10 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useAccount, useContractRead, useContractWrite, useWaitForTransaction } from 'wagmi';
+import { useAccount, useReadContract, useWriteContract, useWatchContractEvent } from 'wagmi';
 import { parseEther } from 'viem';
-import { SendButton } from './SendButton';
+import { Button } from './ui/button';
 import { ConnectWallet } from './ConnectWallet';
-import { Balance } from './Balance';
-import { Error } from './Error';
 import { cn } from '../utils/cn';
 
 // Contract addresses
@@ -32,6 +30,19 @@ const senderAbi = [
     outputs: [{ name: '', type: 'address' }],
     stateMutability: 'view',
     type: 'function'
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, name: 'messageId', type: 'bytes32' },
+      { indexed: true, name: 'destinationChainSelector', type: 'uint64' },
+      { indexed: false, name: 'receiver', type: 'address' },
+      { indexed: false, name: 'festivalData', type: 'string' },
+      { indexed: false, name: 'feeToken', type: 'address' },
+      { indexed: false, name: 'fees', type: 'uint256' }
+    ],
+    name: 'FestivalDataSent',
+    type: 'event'
   }
 ] as const;
 
@@ -63,10 +74,21 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
+type FestivalDataSentEvent = {
+  messageId: `0x${string}`;
+  destinationChainSelector: bigint;
+  receiver: `0x${string}`;
+  festivalData: string;
+  feeToken: `0x${string}`;
+  fees: bigint;
+  transactionHash: `0x${string}`;
+};
+
 export function FestivalGreetings() {
   const { address, isConnected } = useAccount();
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [transactionHash, setTransactionHash] = useState<`0x${string}` | null>(null);
 
   // Form setup
   const form = useForm<FormData>({
@@ -79,22 +101,27 @@ export function FestivalGreetings() {
   });
 
   // Contract reads
-  const { data: lastGreeting } = useContractRead({
+  const { data: lastGreeting, refetch: refetchLastGreeting } = useReadContract({
     address: RECEIVER_CONTRACT as `0x${string}`,
     abi: receiverAbi,
-    functionName: 'getLastReceivedFestivalData',
-    watch: true
+    functionName: 'getLastReceivedFestivalData'
   });
 
   // Contract writes
-  const { write: sendGreeting, data: sendData } = useContractWrite({
+  const { writeContract, isPending } = useWriteContract();
+
+  // Watch for transaction events
+  useWatchContractEvent({
     address: SENDER_CONTRACT as `0x${string}`,
     abi: senderAbi,
-    functionName: 'sendFestivalData'
-  });
-
-  const { isLoading: isTransactionLoading } = useWaitForTransaction({
-    hash: sendData?.hash
+    eventName: 'FestivalDataSent',
+    onLogs: (logs) => {
+      const event = logs[0] as unknown as FestivalDataSentEvent;
+      if (event?.transactionHash) {
+        setTransactionHash(event.transactionHash);
+        refetchLastGreeting();
+      }
+    },
   });
 
   // Handle form submission
@@ -102,6 +129,7 @@ export function FestivalGreetings() {
     try {
       setIsSending(true);
       setError(null);
+      setTransactionHash(null);
 
       const festivalData = JSON.stringify({
         greeting: data.greeting,
@@ -110,7 +138,10 @@ export function FestivalGreetings() {
         timestamp: new Date().toISOString()
       });
 
-      await sendGreeting({
+      await writeContract({
+        address: SENDER_CONTRACT as `0x${string}`,
+        abi: senderAbi,
+        functionName: 'sendFestivalData',
         args: [RECEIVER_CONTRACT, festivalData]
       });
 
@@ -191,15 +222,26 @@ export function FestivalGreetings() {
               )}
             </div>
 
-            <SendButton
-              isLoading={isSending || isTransactionLoading}
-              disabled={!form.formState.isValid || isSending || isTransactionLoading}
-              className="w-full"
+            <Button
+              type="submit"
+              disabled={!form.formState.isValid || isSending || isPending}
+              className={cn(
+                "w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white",
+                "hover:from-purple-700 hover:to-blue-700",
+                "disabled:opacity-50 disabled:cursor-not-allowed"
+              )}
             >
-              Send Greeting
-            </SendButton>
+              {isSending || isPending ? 'Sending...' : 'Send Greeting'}
+            </Button>
 
-            {error && <Error message={error} />}
+            {error && (
+              <p className="mt-2 text-sm text-red-600">{error}</p>
+            )}
+            {transactionHash && (
+              <p className="mt-2 text-sm text-green-600">
+                Transaction sent! Hash: {transactionHash.slice(0, 6)}...{transactionHash.slice(-4)}
+              </p>
+            )}
           </form>
         </div>
 
@@ -234,16 +276,6 @@ export function FestivalGreetings() {
             <p className="text-gray-600">No greetings received yet</p>
           )}
         </div>
-      </div>
-
-      {/* Balance Display */}
-      <div className="bg-white rounded-xl shadow-lg p-6">
-        <Balance
-          address={SENDER_CONTRACT as `0x${string}`}
-          abi={senderAbi}
-          functionName="getLinkToken"
-          label="LINK Balance"
-        />
       </div>
     </div>
   );
