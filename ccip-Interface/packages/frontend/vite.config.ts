@@ -1,6 +1,6 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react-swc';
+import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
 import tailwindcss from 'tailwindcss';
@@ -29,11 +29,27 @@ export default defineConfig(({ command }) => ({
     },
     sourcemap: true,
     emptyOutDir: true,
+    target: 'esnext',
+    minify: 'esbuild',
   },
   plugins: [
-    react(),
-    dts({ rollupTypes: true }),
+    react({
+      babel: {
+        plugins: [
+          ['@babel/plugin-transform-react-jsx', { runtime: 'automatic' }]
+        ],
+        parserOpts: {
+          plugins: ['typescript', 'jsx', 'decorators-legacy']
+        }
+      }
+    }),
   ],
+  esbuild: {
+    logOverride: { 'this-is-undefined-in-esm': 'silent' },
+    legalComments: 'none',
+    treeShaking: true,
+    target: 'esnext',
+  },
   resolve: {
     alias: {
       '@': resolve(__dirname, './lib'),
