@@ -1,8 +1,8 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useAccount, useReadContract, useWriteContract, useWatchContractEvent } from 'wagmi';
+import { useAccount, useReadContract, useWriteContract, useWatchContractEvent, useWaitForTransactionReceipt } from 'wagmi';
 import { parseEther } from 'viem';
 import { Button } from './ui/button';
 import { ConnectWallet } from './ConnectWallet';
@@ -148,7 +148,12 @@ export function FestivalGreetings() {
   });
 
   // Contract writes
-  const { writeContract, isPending } = useWriteContract();
+  const { writeContract, isPending, data: writeData } = useWriteContract();
+
+  // Watch for transaction receipt
+  const { isLoading: isConfirming } = useWaitForTransactionReceipt({
+    hash: writeData,
+  });
 
   // Watch for transaction events
   useWatchContractEvent({
@@ -163,19 +168,33 @@ export function FestivalGreetings() {
         refetchLastGreeting();
         try {
           const data = JSON.parse(event.festivalData);
-          setSentGreetings((prev) => [
-            {
-              greeting: data.greeting,
-              name: data.name,
-              festival: data.festival,
-              timestamp: data.timestamp,
-              transactionHash: event.transactionHash,
-              messageId: event.messageId,
-              fromChain: fromChain || '',
-              toChain: toChain || '',
-            },
-            ...prev.slice(0, 4)
-          ]);
+          setSentGreetings((prev) => {
+            // Find the first greeting without a transactionHash and update it
+            const idx = prev.findIndex(g => !g.transactionHash && g.greeting === data.greeting && g.name === data.name && g.festival === data.festival && g.timestamp === data.timestamp);
+            if (idx !== -1) {
+              const updated = [...prev];
+              updated[idx] = {
+                ...updated[idx],
+                transactionHash: event.transactionHash,
+                messageId: event.messageId,
+              };
+              return updated;
+            }
+            // If not found, just prepend as fallback
+            return [
+              {
+                greeting: data.greeting,
+                name: data.name,
+                festival: data.festival,
+                timestamp: data.timestamp,
+                transactionHash: event.transactionHash,
+                messageId: event.messageId,
+                fromChain: fromChain || '',
+                toChain: toChain || '',
+              },
+              ...prev
+            ];
+          });
         } catch {}
       }
     },
@@ -193,19 +212,36 @@ export function FestivalGreetings() {
       setTransactionHash(null);
       setMessageId(null);
 
+      const timestamp = new Date().toISOString();
       const festivalData = JSON.stringify({
         greeting: data.greeting,
         name: data.name,
         festival: data.festival,
-        timestamp: new Date().toISOString()
+        timestamp
       });
 
-      await writeContract({
+      // Write to contract - this is non-blocking
+      writeContract({
         address: SENDER_CONTRACT as `0x${string}`,
         abi: senderAbi,
         functionName: 'sendFestivalData',
         args: [RECEIVER_CONTRACT, festivalData]
       });
+
+      // Store the greeting data temporarily
+      const greetingData = {
+        greeting: data.greeting,
+        name: data.name,
+        festival: data.festival,
+        timestamp,
+        transactionHash: '', // Will be updated when writeData is available
+        messageId: '', // Will be updated by event
+        fromChain: fromChain || '',
+        toChain: toChain || '',
+      };
+
+      // Add the greeting to sentGreetings immediately
+      setSentGreetings((prev) => [greetingData, ...prev]);
 
       form.reset();
     } catch (err) {
@@ -214,6 +250,26 @@ export function FestivalGreetings() {
       setIsSending(false);
     }
   };
+
+  // Effect to handle transaction hash updates
+  useEffect(() => {
+    if (writeData) {
+      console.log('Transaction hash:', writeData);
+      setTransactionHash(writeData);
+      // Update the most recent greeting with the transaction hash
+      setSentGreetings((prev) => {
+        if (prev.length > 0) {
+          const updated = [...prev];
+          updated[0] = {
+            ...updated[0],
+            transactionHash: writeData,
+          };
+          return updated;
+        }
+        return prev;
+      });
+    }
+  }, [writeData]);
 
   // Copy to clipboard helper
   const copyToClipboard = useCallback((text: string) => {
@@ -232,29 +288,29 @@ export function FestivalGreetings() {
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-b from-white to-purple-50 py-12 px-2">
-      <div className="mb-8 text-center">
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-gradient-to-b from-white to-purple-50 py-8 px-2">
+      <div className="mb-6 text-center w-full">
         <div className="flex items-center justify-center mb-2">
-          <Sparkles className="w-8 h-8 text-purple-600 mr-2" />
-          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">Festival Greetings</h1>
+          <Sparkles className="w-7 h-7 md:w-8 md:h-8 text-purple-600 mr-2" />
+          <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight">Festival Greetings</h1>
         </div>
-        <p className="text-lg text-gray-500 font-medium max-w-2xl mx-auto">
+        <p className="text-base md:text-lg text-gray-500 font-medium max-w-2xl mx-auto">
           Send your festival greetings across chains using <span className="font-semibold text-purple-600">Chainlink CCIP</span>
         </p>
       </div>
-      <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="w-full max-w-4xl md:max-w-6xl grid grid-cols-1 md:grid-cols-2 md:gap-8 gap-4">
         {/* Left: Form Card */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 flex flex-col space-y-6">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center mb-4">
-            <Sparkles className="w-6 h-6 text-purple-500 mr-2" />
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 md:p-8 p-4 flex flex-col space-y-5">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 flex items-center mb-2">
+            <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-purple-500 mr-2" />
             Send a Greeting
           </h2>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label className="block text-base font-semibold text-gray-700 mb-1">Your Name</label>
+              <label className="block text-sm md:text-base font-semibold text-gray-700 mb-1">Your Name</label>
               <input
                 {...form.register('name')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-base"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm md:text-base"
                 placeholder="Enter your name"
               />
               {form.formState.errors.name && (
@@ -262,19 +318,19 @@ export function FestivalGreetings() {
               )}
             </div>
             <div>
-              <label className="block text-base font-semibold text-gray-700 mb-1">Festival Name</label>
+              <label className="block text-sm md:text-base font-semibold text-gray-700 mb-1">Festival Name</label>
               <input
                 {...form.register('festival')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-base"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm md:text-base"
                 placeholder="e.g., Diwali, Christmas, Eid, Chinese New Year"
               />
               {form.formState.errors.festival && (
                 <p className="mt-1 text-xs text-red-600">{form.formState.errors.festival.message}</p>
               )}
             </div>
-            <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex flex-col md:flex-row gap-3 md:gap-4">
               <div className="w-full">
-                <label className="block text-base font-semibold text-gray-700 mb-1">From Chain</label>
+                <label className="block text-sm md:text-base font-semibold text-gray-700 mb-1">From Chain</label>
                 <Select value={fromChain} onValueChange={setFromChain}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select source chain" />
@@ -292,7 +348,7 @@ export function FestivalGreetings() {
                 </Select>
               </div>
               <div className="w-full">
-                <label className="block text-base font-semibold text-gray-700 mb-1">To Chain</label>
+                <label className="block text-sm md:text-base font-semibold text-gray-700 mb-1">To Chain</label>
                 <Select value={toChain} onValueChange={setToChain}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select destination chain" />
@@ -311,10 +367,10 @@ export function FestivalGreetings() {
               </div>
             </div>
             <div>
-              <label className="block text-base font-semibold text-gray-700 mb-1">Your Greeting</label>
+              <label className="block text-sm md:text-base font-semibold text-gray-700 mb-1">Your Greeting</label>
               <textarea
                 {...form.register('greeting')}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent min-h-[100px] text-base"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white min-h-[100px] md:min-h-[120px] text-sm md:text-base mb-4 resize-none md:resize-y"
                 placeholder="Write your festival greeting..."
               />
               {form.formState.errors.greeting && (
@@ -323,22 +379,22 @@ export function FestivalGreetings() {
             </div>
             <Button
               type="submit"
-              disabled={!form.formState.isValid || isSending || isPending}
+              disabled={!form.formState.isValid || isSending || isPending || isConfirming}
               className={cn(
-                "w-full bg-gradient-to-r from-purple-600 to-pink-400 text-white font-bold py-3 rounded-lg shadow-md flex items-center justify-center gap-2 text-lg",
+                "w-full bg-gradient-to-r from-purple-600 to-pink-400 text-white font-bold py-2 md:py-3 rounded-lg shadow-md flex items-center justify-center gap-2 text-base md:text-lg",
                 "hover:from-purple-700 hover:to-pink-500 hover:shadow-lg transition-all duration-150",
                 "disabled:opacity-50 disabled:cursor-not-allowed"
               )}
             >
-              <Sparkles className="w-5 h-5" />
-              {isSending || isPending ? 'Sending...' : 'Send Greeting'}
+              <Sparkles className="w-4 h-4 md:w-5 md:h-5" />
+              {isSending || isPending ? 'Sending...' : isConfirming ? 'Confirming...' : 'Send Greeting'}
             </Button>
             {error && (
-              <p className="mt-2 text-sm text-red-600">{error}</p>
+              <p className="mt-2 text-xs text-red-600">{error}</p>
             )}
             {transactionHash && (
               <div className="mt-4 flex flex-col gap-2">
-                <span className="text-green-700 text-sm font-medium flex items-center gap-2">
+                <span className="text-green-700 text-xs md:text-sm font-medium flex items-center gap-2">
                   <Eye className="w-4 h-4" />
                   Transaction sent!
                   <a
@@ -373,55 +429,61 @@ export function FestivalGreetings() {
           </form>
         </div>
         {/* Right: Recent Greetings Card */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 flex flex-col space-y-6">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center mb-4">
-            <Sparkles className="w-6 h-6 text-purple-500 mr-2" />
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 md:p-8 p-4 flex flex-col space-y-5">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 flex items-center mb-2">
+            <Sparkles className="w-5 h-5 md:w-6 md:h-6 text-purple-500 mr-2" />
             Recent Greetings
           </h2>
           {sentGreetings.length === 0 ? (
-            <div className="text-gray-500 text-center py-8">No greetings sent yet.</div>
+            <div className="text-gray-500 text-center py-6 md:py-8">No greetings sent yet.</div>
           ) : (
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col md:gap-6 gap-4">
               {sentGreetings.map((g, idx) => {
                 const from = MANUAL_CHAINS.find(c => c.chainId === g.fromChain);
                 const to = MANUAL_CHAINS.find(c => c.chainId === g.toChain);
                 return (
                   <div
                     key={g.transactionHash + idx}
-                    className="bg-white rounded-xl border border-gray-200 p-6"
+                    className="bg-white rounded-xl border border-gray-200 md:p-6 p-3"
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xl font-bold text-gray-900">{g.festival}</span>
+                      <span className="text-base md:text-xl font-bold text-gray-900">{g.festival}</span>
                       <span className="ml-2 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700 flex items-center gap-1">
                         <svg className="w-4 h-4 inline-block" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
                         Delivered
                       </span>
                     </div>
-                    <div className="text-sm text-gray-700 mb-1">From {g.name}</div>
+                    <div className="text-xs md:text-sm text-gray-700 mb-1">From {g.name}</div>
                     <div className="text-xs text-gray-500 mb-2">{new Date(g.timestamp).toLocaleString()}</div>
-                    <div className="bg-purple-50 rounded-lg p-4 text-base text-gray-800 mb-4 border border-purple-100">"{g.greeting}"</div>
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="flex items-center gap-2">
+                    <div className="bg-purple-50 rounded-lg p-2 md:p-4 text-xs md:text-base text-gray-800 mb-4 border border-purple-100 break-words">"{g.greeting}"</div>
+                    <div className="flex flex-wrap items-center gap-2 md:gap-4 mb-4 overflow-x-auto whitespace-nowrap">
+                      <div className="flex items-center gap-2 min-w-[110px]">
                         <span className={`w-3 h-3 rounded-full ${from?.color}`} />
-                        <span className="text-sm font-medium text-gray-700">{from?.label || g.fromChain}</span>
+                        <span className="text-xs md:text-sm font-medium text-gray-700">{from?.label || g.fromChain}</span>
                       </div>
                       <ArrowRight className="w-5 h-5 text-gray-400" />
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 min-w-[110px]">
                         <span className={`w-3 h-3 rounded-full ${to?.color}`} />
-                        <span className="text-sm font-medium text-gray-700">{to?.label || g.toChain}</span>
+                        <span className="text-xs md:text-sm font-medium text-gray-700">{to?.label || g.toChain}</span>
                       </div>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
                       <div>
                         <div className="text-xs text-gray-500 font-semibold mb-1">TRANSACTION HASH</div>
-                        <div className="flex items-center gap-2 text-sm font-mono bg-gray-50 rounded px-2 py-1">
-                          {g.transactionHash.slice(0, 8)}...{g.transactionHash.slice(-6)}
-                          <button type="button" onClick={() => copyToClipboard(g.transactionHash)}><Copy className="w-4 h-4" /></button>
+                        <div className="flex items-center gap-2 text-xs md:text-sm font-mono bg-gray-50 rounded px-2 py-1 overflow-x-auto">
+                          {g.transactionHash ? (
+                            <>
+                              {g.transactionHash.slice(0, 8)}...{g.transactionHash.slice(-6)}
+                              <button type="button" onClick={() => copyToClipboard(g.transactionHash)}><Copy className="w-4 h-4" /></button>
+                            </>
+                          ) : (
+                            <span className="text-gray-400">...</span>
+                          )}
                         </div>
                       </div>
                       <div>
                         <div className="text-xs text-gray-500 font-semibold mb-1">CCIP MESSAGE ID</div>
-                        <div className="flex items-center gap-2 text-sm font-mono bg-gray-50 rounded px-2 py-1">
+                        <div className="flex items-center gap-2 text-xs md:text-sm font-mono bg-gray-50 rounded px-2 py-1 overflow-x-auto">
                           {g.messageId ? (
                             <>
                               {g.messageId.slice(0, 8)}...{g.messageId.slice(-6)}
@@ -433,12 +495,12 @@ export function FestivalGreetings() {
                         </div>
                       </div>
                     </div>
-                    <div className="mt-2">
+                    <div className="mt-2 flex flex-col md:flex-row gap-2">
                       <a
-                        href={`https://ccip.chain.link/tx/${g.transactionHash}`}
+                        href={g.transactionHash ? `https://ccip.chain.link/tx/${g.transactionHash}` : '#'}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm font-semibold text-gray-800 transition"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-xs md:text-sm font-semibold text-gray-800 transition"
                       >
                         <Eye className="w-4 h-4" />
                         View in CCIP Explorer
@@ -448,7 +510,7 @@ export function FestivalGreetings() {
                           href={`https://ccip.chain.link/msg/${g.messageId}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm font-semibold text-gray-800 transition ml-2"
+                          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-xs md:text-sm font-semibold text-gray-800 transition"
                         >
                           <Eye className="w-4 h-4" />
                           View Message
