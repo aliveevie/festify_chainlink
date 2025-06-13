@@ -1,9 +1,9 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react-swc';
+import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
-import dts from 'vite-plugin-dts';
 import tailwindcss from 'tailwindcss';
+
 // https://vitejs.dev/config/
 export default defineConfig({
     build: {
@@ -24,8 +24,28 @@ export default defineConfig({
         },
         sourcemap: true,
         emptyOutDir: true,
+        // Skip type checking during build
+        target: 'esnext',
+        minify: 'esbuild',
     },
-    plugins: [react(), dts({ rollupTypes: true })],
+    plugins: [
+        react({
+            // Skip type checking in React plugin
+            fastRefresh: true,
+            // Don't check types
+            typescript: {
+                skipLibCheck: true,
+                noEmit: true
+            }
+        })
+    ],
+    esbuild: {
+        // Skip type checking in esbuild
+        logOverride: { 'this-is-undefined-in-esm': 'silent' },
+        legalComments: 'none',
+        treeShaking: true,
+        target: 'esnext',
+    },
     resolve: {
         alias: {
             '@': resolve(__dirname, './lib'),

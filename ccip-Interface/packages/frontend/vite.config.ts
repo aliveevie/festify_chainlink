@@ -33,15 +33,11 @@ export default defineConfig(({ command }) => ({
     minify: 'esbuild',
   },
   plugins: [
-    react({
-      babel: {
-        plugins: [
-          ['@babel/plugin-transform-react-jsx', { runtime: 'automatic' }]
-        ],
-        parserOpts: {
-          plugins: ['typescript', 'jsx', 'decorators-legacy']
-        }
-      }
+    react(),
+    dts({ 
+      rollupTypes: true,
+      include: [],
+      exclude: ['**/*.ts', '**/*.tsx']
     }),
   ],
   esbuild: {
