@@ -10,7 +10,8 @@ export default defineConfig({
         lib: {
             entry: resolve(__dirname, './lib/index.ts'),
             name: '@chainlink/ccip-react-components',
-            fileName: function (format) { return "index.".concat(format, ".js"); },
+            fileName: (format) => `index.${format}.js`,
+            formats: ['es'],
         },
         rollupOptions: {
             // Ignore all dependency resolution errors
@@ -19,12 +20,27 @@ export default defineConfig({
                 return;
             },
             external: [
-                // Keep basic externals but don't worry about missing ones
                 'react', 
                 'react-dom', 
-                'tailwindcss'
+                'tailwindcss',
+                'viem',
+                '@viem/utils',
+                '@viem/chains',
+                '@viem/contract',
+                '@viem/accounts',
+                '@viem/wallet',
+                '@viem/actions',
+                '@viem/blockchain',
+                '@viem/transport',
+                '@viem/transaction',
+                '@viem/ccip'
             ],
             output: {
+                preserveModules: false,
+                exports: 'named',
+                entryFileNames: 'index.[format].js',
+                chunkFileNames: 'index.[format].js',
+                assetFileNames: 'index.[format].[ext]',
                 globals: {
                     react: 'React',
                     'react-dom': 'ReactDOM',
@@ -34,9 +50,8 @@ export default defineConfig({
         },
         sourcemap: true,
         emptyOutDir: true,
-        // Skip type checking during build
         target: 'esnext',
-        minify: 'esbuild',
+        minify: false,
     },
     plugins: [
         react({
