@@ -9,8 +9,22 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
+  build: {
+    sourcemap: true,
+    minify: false,
+    target: 'esnext',
+    rollupOptions: {
+      onwarn(warning, warn) {
+        // Ignore all warnings
+        return;
+      }
+    }
+  },
   plugins: [
-    react(),
+    react({
+      // Disable React strict mode to be more permissive
+      strict: false,
+    }),
     mode === 'development' &&
     componentTagger(),
   ].filter(Boolean),

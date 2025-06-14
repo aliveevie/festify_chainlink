@@ -64,7 +64,7 @@ export default function CrossChainMessaging() {
 
     try {
       setLoading(true);
-      await writeContract({
+      writeContract({
         address: CROSS_CHAIN_CONTRACT_ADDRESS,
         abi: CROSS_CHAIN_CONTRACT_ABI,
         functionName: 'sendCrossChainFestival',
