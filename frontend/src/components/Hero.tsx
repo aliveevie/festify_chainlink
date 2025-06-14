@@ -1,59 +1,82 @@
-
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, MessageSquare, Globe, Send } from 'lucide-react';
+import { ConnectButton } from "@avalabs/builderkit";
 
 const Hero = () => {
   return (
-    <section id="home" className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-muted/20 relative overflow-hidden">
+    <section id="home" className="min-h-[90vh] flex items-center justify-center relative overflow-hidden">
+      {/* Background Effects */}
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-      <div className="absolute top-20 left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-20 right-20 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl"></div>
+      <div className="absolute top-20 left-20 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-20 right-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-purple-500/5 to-blue-500/5 rounded-full blur-3xl"></div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-        <div className="flex items-center justify-center mb-6">
-          <div className="flex items-center space-x-2 bg-muted/50 backdrop-blur-sm rounded-full px-4 py-2 border border-border">
-            <Sparkles className="w-4 h-4 text-primary" />
-            <span className="text-sm text-muted-foreground">Welcome to the future</span>
+        {/* Badge */}
+        <div className="flex items-center justify-center mb-8">
+          <div className="flex items-center space-x-2 bg-gradient-to-r from-purple-500/10 to-blue-500/10 backdrop-blur-sm rounded-full px-6 py-3 border border-purple-500/20">
+            <Sparkles className="w-5 h-5 text-purple-500" />
+            <span className="text-sm font-medium bg-gradient-to-r from-purple-500 to-blue-500 bg-clip-text text-transparent">
+              Powered by Chainlink CCIP
+            </span>
           </div>
         </div>
         
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-tight">
-          Modern React
-          <span className="bg-gradient-to-r from-primary to-purple-600 bg-clip-text text-transparent block">
-            Boilerplate
+        {/* Main Title */}
+        <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-foreground mb-8 leading-tight">
+          Send Festival
+          <span className="bg-gradient-to-r from-purple-600 via-blue-500 to-purple-600 bg-clip-text text-transparent block mt-2">
+            Messages Across Chains
           </span>
         </h1>
         
-        <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-          A beautiful, responsive, and modern starter template built with React, TypeScript, and Tailwind CSS. 
-          Ready to power your next amazing project.
+        {/* Description */}
+        <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed">
+          Connect with festival-goers across different blockchains using Chainlink CCIP. 
+          Send secure, cross-chain messages and greetings powered by Avalanche and Chainlink.
         </p>
         
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <button className="bg-primary text-primary-foreground px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary/90 transition-all duration-300 flex items-center space-x-2 group">
-            <span>Get Started</span>
+        {/* CTA Buttons */}
+        <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+          <button className="bg-gradient-to-r from-purple-600 to-blue-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition-all duration-300 flex items-center space-x-3 group shadow-lg shadow-purple-500/20">
+            <MessageSquare className="w-5 h-5" />
+            <span>Send Message</span>
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
-          <button className="border border-border text-foreground px-8 py-4 rounded-lg font-semibold text-lg hover:bg-muted/50 transition-all duration-300">
-            Learn More
+          <button className="border border-purple-500/20 text-foreground px-8 py-4 rounded-xl font-semibold text-lg hover:bg-purple-500/5 transition-all duration-300 flex items-center space-x-3">
+            <Globe className="w-5 h-5" />
+            <span>Explore Chains</span>
           </button>
         </div>
+
+        {/* Connect Wallet Section */}
+        <div className="bg-gradient-to-r from-purple-500/5 to-blue-500/5 rounded-2xl p-8 border border-purple-500/20 max-w-2xl mx-auto">
+          <div className="flex flex-col items-center space-y-4">
+            <Send className="w-8 h-8 text-purple-500" />
+            <h3 className="text-xl font-semibold text-foreground">Connect Your Wallet to Start</h3>
+            <p className="text-muted-foreground text-center mb-4">
+              Connect your wallet to send cross-chain festival messages using Chainlink CCIP
+            </p>
+            <ConnectButton className="!bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 !text-white !font-medium !px-6 !py-3 !rounded-xl !transition-all !duration-200 !shadow-lg !shadow-purple-500/20" />
+          </div>
+        </div>
         
-        <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          <div>
-            <div className="text-3xl font-bold text-foreground">React 18</div>
-            <div className="text-muted-foreground">Latest version</div>
+        {/* Stats */}
+        <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          <div className="bg-gradient-to-b from-purple-500/5 to-transparent p-6 rounded-xl border border-purple-500/10">
+            <div className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">5+</div>
+            <div className="text-muted-foreground">Supported Chains</div>
           </div>
-          <div>
-            <div className="text-3xl font-bold text-foreground">TypeScript</div>
-            <div className="text-muted-foreground">Type safety</div>
+          <div className="bg-gradient-to-b from-purple-500/5 to-transparent p-6 rounded-xl border border-purple-500/10">
+            <div className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">100%</div>
+            <div className="text-muted-foreground">Secure Messages</div>
           </div>
-          <div>
-            <div className="text-3xl font-bold text-foreground">Tailwind</div>
-            <div className="text-muted-foreground">Utility-first CSS</div>
+          <div className="bg-gradient-to-b from-purple-500/5 to-transparent p-6 rounded-xl border border-purple-500/10">
+            <div className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">24/7</div>
+            <div className="text-muted-foreground">Cross-Chain Support</div>
           </div>
-          <div>
-            <div className="text-3xl font-bold text-foreground">Responsive</div>
-            <div className="text-muted-foreground">Mobile-first</div>
+          <div className="bg-gradient-to-b from-purple-500/5 to-transparent p-6 rounded-xl border border-purple-500/10">
+            <div className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">10k+</div>
+            <div className="text-muted-foreground">Messages Sent</div>
           </div>
         </div>
       </div>

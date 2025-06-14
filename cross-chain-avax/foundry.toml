@@ -10,7 +10,9 @@ remappings = [
     "@avalabs/subnet-evm-contracts/=lib/icm-contracts/lib/subnet-evm/contracts/",
     "@teleporter/=lib/icm-contracts/contracts/teleporter/",
     "@teleporter-mocks/=lib/icm-contracts/contracts/mocks/",
-    "@avalanche-interchain-token-transfer/=lib/icm-contracts/contracts/ictt/"
+    "@avalanche-interchain-token-transfer/=lib/icm-contracts/contracts/ictt/",
+    "@chainlink/contracts/=lib/chainlink/contracts/",
+    "@chainlink/contracts-ccip/=lib/chainlink/contracts-ccip/"
 ]
 
 [rpc_endpoints]

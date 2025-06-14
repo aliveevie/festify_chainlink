@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --ccip-background: #FFFFFF;
+    --ccip-text: #000000;
+    --ccip-border: #B3B7C0;
+    --ccip-primary: #000000;
+    --ccip-muted: #6D7480;
+    --ccip-input: #FFFFFF;
+    --ccip-popover: #F5F7FA;
+    --ccip-selected: #D7DBE0;
+    --ccip-warning: #F7B955;
+    --ccip-warning-background: #FFF5E0;
+  }
+
+  .dark {
+    --ccip-background: #1A1A1A;
+    --ccip-text: #FFFFFF;
+    --ccip-border: #2D2D2D;
+    --ccip-primary: #FFFFFF;
+    --ccip-muted: #A0A0A0;
+    --ccip-input: #2D2D2D;
+    --ccip-popover: #2D2D2D;
+    --ccip-selected: #404040;
+    --ccip-warning: #F7B955;
+    --ccip-warning-background: #2D2D2D;
+  }
+}
+
+@layer components {
+  .bg-ccip-background {
+    background-color: var(--ccip-background);
+  }
+  .text-ccip-text {
+    color: var(--ccip-text);
+  }
+  .border-ccip-border {
+    border-color: var(--ccip-border);
+  }
+  .text-ccip-primary {
+    color: var(--ccip-primary);
+  }
+  .text-ccip-muted {
+    color: var(--ccip-muted);
+  }
+  .bg-ccip-input {
+    background-color: var(--ccip-input);
+  }
+  .bg-ccip-popover {
+    background-color: var(--ccip-popover);
+  }
+  .bg-ccip-selected {
+    background-color: var(--ccip-selected);
+  }
+  .text-ccip-warning {
+    color: var(--ccip-warning);
+  }
+  .bg-ccip-warning-background {
+    background-color: var(--ccip-warning-background);
+  }
+} 
