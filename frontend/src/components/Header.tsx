@@ -1,15 +1,16 @@
 import { ConnectButton } from "@avalabs/builderkit";
-// import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const Header = () => {
-  // const location = useLocation();
+  const location = useLocation();
 
   const navItems = [
     { label: 'Home', path: '/' },
     { label: 'Features', path: '/features' },
     { label: 'Events', path: '/events' },
     { label: 'Create', path: '/create' },
+    { label: 'Cross-Chain', path: '/cross-chain' },
   ];
 
   return (
@@ -34,18 +35,18 @@ const Header = () => {
           {/* Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
             {navItems.map((item) => (
-              <span
+              <Link
                 key={item.path}
+                to={item.path}
                 className={cn(
-                  "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-default text-gray-600 dark:text-gray-300",
-                  // location.pathname === item.path
-                  false
-                    ? "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400"
+                  "px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer text-gray-600 dark:text-gray-300",
+                  location.pathname === item.path
+                    ? "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 shadow"
                     : "hover:text-purple-600 dark:hover:text-purple-400 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                 )}
               >
                 {item.label}
-              </span>
+              </Link>
             ))}
           </nav>
 

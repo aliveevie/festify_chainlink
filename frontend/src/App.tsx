@@ -9,6 +9,7 @@ import { echo } from './chains/definitions/echo';
 import { dispatch } from './chains/definitions/dispatch';
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import CrossChainMessaging from "./pages/CrossChainMessaging";
 import Header from './components/Header';
 
 // Configure chains
@@ -35,6 +36,7 @@ const App = () => {
                   <Route path="/features" element={<div className="container mx-auto px-4 py-8">Features Page</div>} />
                   <Route path="/events" element={<div className="container mx-auto px-4 py-8">Events Page</div>} />
                   <Route path="/create" element={<div className="container mx-auto px-4 py-8">Create Event Page</div>} />
+                  <Route path="/cross-chain" element={<CrossChainMessaging />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
