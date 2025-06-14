@@ -7,47 +7,6 @@ import tailwindcss from 'tailwindcss';
 // https://vitejs.dev/config/
 export default defineConfig({
     build: {
-        lib: {
-            entry: resolve(__dirname, './lib/index.ts'),
-            name: '@chainlink/ccip-react-components',
-            fileName: (format) => `index.${format}.js`,
-            formats: ['es'],
-        },
-        rollupOptions: {
-            // Ignore all dependency resolution errors
-            onwarn(warning, warn) {
-                // Ignore all warnings
-                return;
-            },
-            external: [
-                'react', 
-                'react-dom', 
-                'tailwindcss',
-                'viem',
-                '@viem/utils',
-                '@viem/chains',
-                '@viem/contract',
-                '@viem/accounts',
-                '@viem/wallet',
-                '@viem/actions',
-                '@viem/blockchain',
-                '@viem/transport',
-                '@viem/transaction',
-                '@viem/ccip'
-            ],
-            output: {
-                preserveModules: false,
-                exports: 'named',
-                entryFileNames: 'index.[format].js',
-                chunkFileNames: 'index.[format].js',
-                assetFileNames: 'index.[format].[ext]',
-                globals: {
-                    react: 'React',
-                    'react-dom': 'ReactDOM',
-                    tailwindcss: 'tailwindcss'
-                },
-            },
-        },
         sourcemap: true,
         emptyOutDir: true,
         target: 'esnext',
