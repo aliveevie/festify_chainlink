@@ -58,9 +58,7 @@ export default defineConfig({
         // Ignore all errors
         logLevel: 'silent',
         // Don't fail on errors
-        logLimit: 0,
-        // Ignore all warnings
-        logWarning: false
+        logLimit: 0
     },
     resolve: {
         alias: {
@@ -88,7 +86,27 @@ export default defineConfig({
     },
     // Ignore all build errors
     optimizeDeps: {
-        exclude: ['*']
+        exclude: [
+            'viem',
+            '@viem/utils',
+            '@viem/chains',
+            '@viem/contract',
+            '@viem/accounts',
+            '@viem/wallet',
+            '@viem/actions',
+            '@viem/blockchain',
+            '@viem/transport',
+            '@viem/transaction',
+            '@viem/ccip'
+        ],
+        include: [
+            'react',
+            'react-dom',
+            'tailwindcss'
+        ],
+        esbuildOptions: {
+            target: 'esnext'
+        }
     },
     // Don't fail on errors
     server: {
